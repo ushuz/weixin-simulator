@@ -25,4 +25,4 @@ settings = {
 ```
 
 ##截图
-![Simulator GUI Screenshot](gui.jpg)
+![Simulator GUI Screenshot](/gui.jpg)
