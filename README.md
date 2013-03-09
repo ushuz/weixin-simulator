@@ -4,7 +4,7 @@
 
 
 ##设置
-请根据需要在主文件`gui.py`中修改settings字典，最重要将`url`修改为对应Handler的URL。
+请根据需要在主文件`gui.py`中修改settings字典，最重要的是把`url`修改为相应Handler的URL。
 ```python
 settings = {
     # `ToUserName` & `FromUserName` will be placed in the XML data posted to
@@ -26,5 +26,7 @@ settings = {
 
 ##使用
 完成设置后直接运行主文件`gui.py`即可。效果如下图：
+
 ![Simulator GUI Screenshot](/gui.jpg)
+
 其中点击`关注公众帐号`将模拟一位新的微信用户关注该公众帐号。
