@@ -47,14 +47,9 @@ def post(url, data):
     return response.read()
 
 
-def run():
-    r = send()
-    receive(r)
-
-
-def send(s=None):
-    if s is None:
-        s = e.get()
+def send():
+    s = e.get()
+    
     if s:
         t.insert(tk.END, settings["me_display_name"]+"\n", "send_name")
         t.insert(tk.END, s+"\n", "send_content")
@@ -68,13 +63,16 @@ def send(s=None):
         }
 
         qs = "?signature=%s&timestamp=%s&nonce=%s" % \
-            mix(msg["time"], msg["id"])
-        return post(settings["url"]+qs, template % msg)
+            mix(int(msg["time"]), msg["id"])
+        receive(msg["time"], post(settings["url"]+qs, template % msg))
 
 
-def receive(r):
-    et = ET.fromstring(r)
-    print "Received:\n%s\n" % r
+def receive(start, response):
+    if time.time() - start > 4.95:
+        return
+
+    et = ET.fromstring(response)
+    print "Received:\n%s\n" % response
 
     c = unicode(et.find("Content").text)
 
@@ -97,13 +95,13 @@ def follow():
     msg = {
         "to": settings["ToUserName"],
         "from": settings["FromUserName"],
-        "time": int(time.time()),
+        "time": time.time(),
         "content": "Hello2BizUser",
         "id": str(random.random())[-10:],
     }
     qs = "?signature=%s&timestamp=%s&nonce=%s" % \
-        mix(msg["time"], msg["id"])
-    receive(post(settings["url"]+qs, template % msg))
+        mix(int(msg["time"]), msg["id"])
+    receive(msg["time"], post(settings["url"]+qs, template % msg))
 
 
 top = tk.Tk()
@@ -126,7 +124,7 @@ t.tag_config("receive_content", spacing3=10, lmargin1=2)
 e = tk.Entry(top)
 e.pack(side=tk.LEFT)
 
-b = tk.Button(top, text="发送", command=run)
+b = tk.Button(top, text="发送", command=send)
 b.pack(side=tk.LEFT)
 
 a = tk.Button(top, text="关注公众帐号", command=follow)
