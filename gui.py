@@ -48,7 +48,7 @@ def post(url, data):
 
 
 def send():
-    s = e.get()
+    s = e.get().encode('utf-8') #fix chinese commands input
     
     if s:
         t.insert(tk.END, settings["me_display_name"]+"\n", "send_name")
