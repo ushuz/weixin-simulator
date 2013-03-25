@@ -28,7 +28,7 @@ settings = {
 }
 
 
-template = '''
+TPL_TEXT = '''
 <xml>
     <ToUserName><![CDATA[%(to)s]]></ToUserName>
     <FromUserName><![CDATA[%(from)s]]></FromUserName>
@@ -38,6 +38,16 @@ template = '''
     <MsgId>$(id)s</MsgId>
 </xml>
 '''
+
+TPL_EVENT = '''
+<xml>
+    <ToUserName><![CDATA[%(to)s]]></ToUserName>
+    <FromUserName><![CDATA[%(from)s]]></FromUserName>
+    <CreateTime>%(time)d</CreateTime>
+    <MsgType><![CDATA[event]]></MsgType>
+    <Event><![CDATA[%(event)s]]></Event>
+    <EventKey><![CDATA[%(key)s]]></EventKey>
+</xml>'''
 
 
 def post(url, data):
@@ -59,12 +69,12 @@ def send():
             "from": settings["FromUserName"],
             "time": time.time(),
             "content": s,
-            "id": str(random.random())[-10:],
+            "id": str(random.random())[-10:]
         }
 
         qs = "?signature=%s&timestamp=%s&nonce=%s" % \
             mix(int(msg["time"]), msg["id"])
-        receive(msg["time"], post(settings["url"]+qs, template % msg))
+        receive(msg["time"], post(settings["url"]+qs, TPL_TEXT % msg))
 
 
 def receive(start, response):
@@ -96,12 +106,14 @@ def follow():
         "to": settings["ToUserName"],
         "from": settings["FromUserName"],
         "time": time.time(),
-        "content": "Hello2BizUser",
-        "id": str(random.random())[-10:],
+        "event": "subscribe",
+        "key": "1234567890"    # At present, I have no idea what this part
+                               # will be.  So I put a placeholder here and
+                               # I will update as long as I figured it out.
     }
     qs = "?signature=%s&timestamp=%s&nonce=%s" % \
-        mix(int(msg["time"]), msg["id"])
-    receive(msg["time"], post(settings["url"]+qs, template % msg))
+        mix(int(msg["time"]), msg["key"])
+    receive(msg["time"], post(settings["url"]+qs, TPL_EVENT % msg))
 
 
 top = tk.Tk()
