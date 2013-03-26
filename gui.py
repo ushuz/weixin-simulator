@@ -58,7 +58,7 @@ def post(url, data):
 
 
 def send():
-    s = e.get().encode('utf-8') #fix chinese commands input
+    s = e.get().encode('utf-8')     # Fix Chinese input.
     
     if s:
         t.insert(tk.END, settings["me_display_name"]+"\n", "send_name")
@@ -92,6 +92,8 @@ def receive(start, response):
 
 def mix(time, salt):
     timestamp = str(time)
+    
+    # I don't know how Weixin generate nonce, so I turn to random.
     nonce = str(time + int(salt[-6:]))
 
     l = [timestamp, nonce, settings["token"]]
@@ -107,12 +109,10 @@ def follow():
         "from": settings["FromUserName"],
         "time": time.time(),
         "event": "subscribe",
-        "key": "1234567890"    # At present, I have no idea what this part
-                               # will be.  So I put a placeholder here and
-                               # I will update as long as I figured it out.
+        "key": ""       # `EventKey` in `subscribe` event is empty.
     }
     qs = "?signature=%s&timestamp=%s&nonce=%s" % \
-        mix(int(msg["time"]), msg["key"])
+        mix(int(msg["time"]), str(random.random())[-10:])
     receive(msg["time"], post(settings["url"]+qs, TPL_EVENT % msg))
 
 
