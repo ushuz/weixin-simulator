@@ -109,7 +109,20 @@ def follow():
         "from": settings["FromUserName"],
         "time": time.time(),
         "event": "subscribe",
-        "key": ""       # `EventKey` in `subscribe` event is empty.
+        "key": ""
+    }
+    qs = "?signature=%s&timestamp=%s&nonce=%s" % \
+        mix(int(msg["time"]), str(random.random())[-10:])
+    receive(msg["time"], post(settings["url"]+qs, TPL_EVENT % msg))
+
+
+def unfollow():
+    msg = {
+        "to": settings["ToUserName"],
+        "from": settings["FromUserName"],
+        "time": time.time(),
+        "event": "unsubscribe",
+        "key": ""       # `EventKey` in `unsubscribe` event is empty.
     }
     qs = "?signature=%s&timestamp=%s&nonce=%s" % \
         mix(int(msg["time"]), str(random.random())[-10:])
@@ -140,6 +153,9 @@ b = tk.Button(top, text="发送", command=send)
 b.pack(side=tk.LEFT)
 
 a = tk.Button(top, text="关注公众帐号", command=follow)
+a.pack(side=tk.RIGHT)
+
+a = tk.Button(top, text="取消关注", command=unfollow)
 a.pack(side=tk.RIGHT)
 
 if __name__ == "__main__":
