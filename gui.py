@@ -50,7 +50,9 @@ TPL_EVENT = '''
 </xml>'''
 
 
-def post(url, data):
+def post(qs, data):
+    # Concatenate URL with query string
+    url = settings["url"] + qs
     request = urllib2.Request(url, data)
     request.add_header("Content-Type", "text/xml")
     response = urllib2.urlopen(request)
@@ -59,8 +61,28 @@ def post(url, data):
 
 def send():
     s = e.get().encode('utf-8')     # Fix Chinese input.
-    
-    if s:
+
+    if not s:
+        return
+
+    # Simulation for clicking the menu.
+    # Usage: EVENT_TYPE@EVENT_KEY
+    #        'c@KEY_FIND'   - 'CLICK' event with 'KEY_FIND' as event key
+    #        'v@www.qq.com' - 'VIEW' event with 'www.qq.com' as event key
+    if s.startswith("c@") or s.startswith("v@"):
+        event, key = s.split("@")
+        msg = {
+            "to": settings["ToUserName"],
+            "from": settings["FromUserName"],
+            "time": time.time(),
+            "event": "CLICK" if event == "c" else "VIEW",
+            "key": key
+        }
+        qs = "?signature=%s&timestamp=%s&nonce=%s" % \
+            mix(int(msg["time"]))
+        receive(msg["time"], post(qs, TPL_EVENT % msg))
+    # Simulation for sending a message.
+    else:
         t.insert(tk.END, settings["me_display_name"]+"\n", "send_name")
         t.insert(tk.END, s+"\n", "send_content")
 
@@ -73,34 +95,55 @@ def send():
         }
 
         qs = "?signature=%s&timestamp=%s&nonce=%s" % \
-            mix(int(msg["time"]), msg["id"])
-        receive(msg["time"], post(settings["url"]+qs, TPL_TEXT % msg))
+            mix(int(msg["time"]))
+        receive(msg["time"], post(qs, TPL_TEXT % msg))
 
 
 def receive(start, response):
     if time.time() - start > 4.95:
         return
 
-    et = ET.fromstring(response)
-    print "Received:\n%s\n" % response
+    if not response:
+        print "No response."
+        return
 
-    c = unicode(et.find("Content").text)
+    print "Received:\n%s\n" % response.decode("utf-8")
+    et = ET.fromstring(response)
+
+    to = et.find("ToUserName").text.decode("utf-8")
+    fr = et.find("FromUserName").text.decode("utf-8")
+
+    type = et.find("MsgType").text.decode("utf-8")
+    if type == u"text":
+        c = unicode(et.find("Content").text)
+    elif type == u"news":
+        l = []
+        for i in et.find("Articles").findall("item"):
+            l.append(unicode(i.find("Title").text))
+            l.append(unicode(i.find("Description").text))
+            l.append(unicode(i.find("PicUrl").text))
+            l.append(unicode(i.find("Url").text))
+            l.append("---")
+        c = u"\n".join(l)
+    else:
+        print "Unknown response."
+        return
 
     t.insert(tk.END, settings["mp_display_name"]+"\n", "receive_name")
     t.insert(tk.END, c+"\n", "receive_content")
 
 
-def mix(time, salt):
+def mix(time):
     timestamp = str(time)
-    
-    # I don't know how Weixin generate nonce, so I turn to random.
-    nonce = str(time + int(salt[-6:]))
+
+    # I don't know how Weixin generate the 9-digit nonce, so I turn to random.
+    nonce = str(int(random.random()))[-9:]
 
     l = [timestamp, nonce, settings["token"]]
     l.sort()
     signature = hashlib.sha1("".join(l)).hexdigest()
 
-    return (signature, timestamp, nonce)
+    return signature, timestamp, nonce
 
 
 def follow():
@@ -112,8 +155,8 @@ def follow():
         "key": ""
     }
     qs = "?signature=%s&timestamp=%s&nonce=%s" % \
-        mix(int(msg["time"]), str(random.random())[-10:])
-    receive(msg["time"], post(settings["url"]+qs, TPL_EVENT % msg))
+        mix(int(msg["time"]))
+    receive(msg["time"], post(qs, TPL_EVENT % msg))
 
 
 def unfollow():
@@ -125,8 +168,8 @@ def unfollow():
         "key": ""       # `EventKey` in `unsubscribe` event is empty.
     }
     qs = "?signature=%s&timestamp=%s&nonce=%s" % \
-        mix(int(msg["time"]), str(random.random())[-10:])
-    receive(msg["time"], post(settings["url"]+qs, TPL_EVENT % msg))
+        mix(int(msg["time"]))
+    receive(msg["time"], post(qs, TPL_EVENT % msg))
 
 
 top = tk.Tk()
