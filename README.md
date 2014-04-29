@@ -27,6 +27,15 @@ settings = {
 ##使用
 完成设置后直接运行主文件`gui.py`即可。效果如下图：
 
-![Simulator GUI Screenshot](/gui.jpg)
+![Simulator GUI Screenshot](screenshot.png)
 
-其中点击`关注公众帐号`将模拟一位新的微信用户关注该公众帐号。
+点击`关注公众帐号`将模拟一位微信用户关注该公众帐号。
+
+点击`取消关注`将模拟一位微信用户取消关注该公众帐号。
+
+发送`c@EVENT_KEY`将模拟一位微信用户点击以`EVENT_KEY`为`EventKey`的`CLICK`类型自定义菜单选项。
+
+发送`v@URL`将模拟一位微信用户点击以`URL`为`EventKey`的`VIEW`类型自定义菜单选项。
+
+##其他
+功能很简单也很不完善，不过最基本的开发够用了。好在代码也很简单，请随意修改以满足自己的需求。欢迎发PR。
