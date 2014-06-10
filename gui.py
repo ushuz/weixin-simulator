@@ -131,6 +131,7 @@ def receive(start, response):
 
     t.insert(tk.END, settings["mp_display_name"]+"\n", "receive_name")
     t.insert(tk.END, c+"\n", "receive_content")
+    t.yview_moveto(1.0)
 
 
 def mix(time):
