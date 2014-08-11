@@ -176,7 +176,7 @@ def unfollow():
 top = tk.Tk()
 top.title("微信模拟器")
 
-t = st.ScrolledText(top, width=40)
+t = st.ScrolledText(top, width=45, height=30)
 t.pack()
 
 t.tag_add("send_name", "1.0", "1.end")
