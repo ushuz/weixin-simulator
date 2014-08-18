@@ -35,7 +35,7 @@ TPL_TEXT = '''
     <CreateTime>%(time)d</CreateTime>
     <MsgType><![CDATA[text]]></MsgType>
     <Content><![CDATA[%(content)s]]></Content>
-    <MsgId>$(id)s</MsgId>
+    <MsgId>%(id)s</MsgId>
 </xml>
 '''
 
