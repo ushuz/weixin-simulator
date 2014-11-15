@@ -108,7 +108,11 @@ def receive(start, response):
         return
 
     print "Received:\n%s\n" % response.decode("utf-8")
-    et = ET.fromstring(response)
+    try:
+        et = ET.fromstring(response)
+    except ET.ParseError:
+        print "Unknown response."
+        return
 
     to = et.find("ToUserName").text.decode("utf-8")
     fr = et.find("FromUserName").text.decode("utf-8")
