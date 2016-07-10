@@ -129,6 +129,8 @@ def receive(start, response):
             l.append(unicode(i.find("Url").text))
             l.append("---")
         c = u"\n".join(l)
+    elif type == u"image":
+        c = unicode(et.find("Image").find("MediaId").text)
     else:
         print "Unknown response."
         return
