@@ -121,16 +121,16 @@ def receive(start, response):
     if type == u"text":
         c = unicode(et.find("Content").text)
     elif type == u"news":
-        l = []
+        l = ["[news]"]
         for i in et.find("Articles").findall("item"):
-            l.append(unicode(i.find("Title").text))
-            l.append(unicode(i.find("Description").text))
-            l.append(unicode(i.find("PicUrl").text))
-            l.append(unicode(i.find("Url").text))
+            l.append(u"Title={0}".format(unicode(i.find("Title").text)))
+            l.append(u"Description={0}".format(unicode(i.find("Description").text)))
+            l.append(u"PicUrl={0}".format(unicode(i.find("PicUrl").text)))
+            l.append(u"Url={0}".format(unicode(i.find("Url").text)))
             l.append("---")
         c = u"\n".join(l)
     elif type == u"image":
-        c = unicode(et.find("Image").find("MediaId").text)
+        c = u"[image]\nMediaId={0}\n---".format(unicode(et.find("Image").find("MediaId").text))
     else:
         print "Unknown response."
         return
@@ -186,15 +186,15 @@ t = st.ScrolledText(top, width=45, height=30)
 t.pack()
 
 t.tag_add("send_name", "1.0", "1.end")
-t.tag_config("send_name", font=("Arial", "10", "bold"),
-            justify=tk.RIGHT, rmargin=6)
+t.tag_config("send_name", font=("Arial", "10", "bold"), spacing3=5, rmargin=6,
+             justify=tk.RIGHT)
 t.tag_add("send_content", "2.0", "2.end")
-t.tag_config("send_content", spacing3=10, justify=tk.RIGHT, rmargin=6)
+t.tag_config("send_content", spacing3=2, justify=tk.RIGHT, rmargin=6)
 
 t.tag_add("receive_name", "1.0", "1.end")
-t.tag_config("receive_name", font=("Arial", "10", "bold"), lmargin1=2)
+t.tag_config("receive_name", font=("Arial", "10", "bold"), spacing3=5, lmargin1=2)
 t.tag_add("receive_content", "2.0", "2.end")
-t.tag_config("receive_content", spacing3=10, lmargin1=2)
+t.tag_config("receive_content", lmargin1=2)
 
 e = tk.Entry(top)
 e.pack(side=tk.LEFT)
