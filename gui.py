@@ -2,12 +2,13 @@
 
 import time
 import random
-import urllib2
 import hashlib
 import xml.etree.cElementTree as ET
 
 import Tkinter as tk
 import ScrolledText as st
+
+import requests
 
 
 settings = {
@@ -18,13 +19,16 @@ settings = {
 
     # URL of your Wexin handler.
     "url": "http://localhost:8080/weixin",
+    # Path to client certificate
+    # Put certificate and secret key into a single PEM file
+    "cert": "",
 
     # These will be displayed in GUI.
     "mp_display_name": "APP",
     "me_display_name": "ME",
 
     # The token you submitted to Weixin MP. Used to generate signature.
-    "token": ""
+    "token": "",
 }
 
 
@@ -51,12 +55,8 @@ TPL_EVENT = '''
 
 
 def post(qs, data):
-    # Concatenate URL with query string
-    url = settings["url"] + qs
-    request = urllib2.Request(url, data)
-    request.add_header("Content-Type", "text/xml")
-    response = urllib2.urlopen(request)
-    return response.read()
+    r = requests.post(settings["url"] + qs, data=data, cert=settings["cert"], verify=False)
+    return r.content
 
 
 def send():
