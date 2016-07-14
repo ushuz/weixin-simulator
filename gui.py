@@ -111,7 +111,7 @@ def receive(start, response):
     try:
         et = ET.fromstring(response)
     except ET.ParseError:
-        print "Unknown response."
+        print "Bad XML."
         return
 
     to = et.find("ToUserName").text.decode("utf-8")
