@@ -55,7 +55,8 @@ TPL_EVENT = '''
 
 
 def post(qs, data):
-    r = requests.post(settings["url"] + qs, data=data, cert=settings["cert"], verify=False)
+    headers = {'Content-Type': 'application/xml'}
+    r = requests.post(settings["url"] + qs, data=data, cert=settings["cert"], verify=False, headers=headers)
     return r.content
 
 
