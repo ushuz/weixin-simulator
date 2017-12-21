@@ -1,9 +1,9 @@
-#Weixin-simulator
+# weixin-simulator
 
 微信公众平台没有本地调试环境，在开发时遇到了很多麻烦。写测试固然是一种方式，但维护一大批测试样例挺费神的，所以希望能有什么东西模拟微信客户端在本地与应用进行交互。求谷歌不得，于是用`tkinter`自己写了个模拟器。
 
 
-##配置
+## 配置
 请根据需要在主文件`gui.py`中修改settings字典，最重要的是把`url`修改为相应Handler的URL。
 ```python
 settings = {
@@ -24,7 +24,7 @@ settings = {
 }
 ```
 
-##使用
+## 使用
 完成设置后直接运行主文件`gui.py`即可。效果如下图：
 
 ![Simulator GUI Screenshot](screenshot.png)
@@ -37,5 +37,5 @@ settings = {
 
 发送`v@URL`将模拟一位微信用户点击以`URL`为`EventKey`的`VIEW`类型自定义菜单选项。
 
-##其他
+## 其他
 功能很简单也很不完善，不过最基本的开发够用了。好在代码也很简单，请随意修改以满足自己的需求。欢迎发PR。
