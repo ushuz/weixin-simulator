@@ -39,3 +39,14 @@ settings = {
 
 ## 其他
 功能很简单也很不完善，不过最基本的开发够用了。好在代码也很简单，请随意修改以满足自己的需求。欢迎发PR。
+
+
+## Example: Interact with Flask-Weixin example
+
+[Flask-Weixin](https://github.com/lepture/flask-weixin)
+
+![Simulator GUI](assets/weixin-simulator-gui.png)
+
+![Simulator output](assets/weixin-simulator-output.png)
+
+![Flask-Weixin output](assets/flask-weixin-output.png)

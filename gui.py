@@ -5,8 +5,8 @@ import random
 import hashlib
 import xml.etree.cElementTree as ET
 
-import Tkinter as tk
-import ScrolledText as st
+import tkinter as tk
+from tkinter import scrolledtext as st
 
 import requests
 
@@ -28,7 +28,7 @@ settings = {
     "me_display_name": "ME",
 
     # The token you submitted to Weixin MP. Used to generate signature.
-    "token": "",
+    "token": "B0e8alq5ZmMjcnG5gwwLRPW2",
 }
 
 
@@ -56,12 +56,12 @@ TPL_EVENT = '''
 
 def post(qs, data):
     headers = {'Content-Type': 'text/xml'}
-    r = requests.post(settings["url"] + qs, data=data, cert=settings["cert"], verify=False, headers=headers)
+    r = requests.post(settings["url"] + qs, data=data.encode(), cert=settings["cert"], verify=False, headers=headers)
     return r.content
 
 
 def send():
-    s = e.get().encode('utf-8')     # Fix Chinese input.
+    s = e.get()
 
     if not s:
         return
@@ -105,35 +105,35 @@ def receive(start, response):
         return
 
     if not response:
-        print "No response."
+        print("No response.")
         return
 
-    print "Received:\n%s\n" % response.decode("utf-8")
+    print("Received:\n%s\n" % response.decode())
     try:
         et = ET.fromstring(response)
     except ET.ParseError:
-        print "Bad XML."
+        print("Bad XML.")
         return
 
-    to = et.find("ToUserName").text.decode("utf-8")
-    fr = et.find("FromUserName").text.decode("utf-8")
+    to = et.find("ToUserName").text
+    fr = et.find("FromUserName").text
 
-    type = et.find("MsgType").text.decode("utf-8")
-    if type == u"text":
-        c = unicode(et.find("Content").text)
-    elif type == u"news":
+    type = et.find("MsgType").text
+    if type == "text":
+        c = et.find("Content").text
+    elif type == "news":
         l = ["[news]"]
         for i in et.find("Articles").findall("item"):
-            l.append(u"Title={0}".format(unicode(i.find("Title").text)))
-            l.append(u"Description={0}".format(unicode(i.find("Description").text)))
-            l.append(u"PicUrl={0}".format(unicode(i.find("PicUrl").text)))
-            l.append(u"Url={0}".format(unicode(i.find("Url").text)))
+            l.append("Title={0}".format(i.find("Title").text))
+            l.append("Description={0}".format(i.find("Description").text))
+            l.append("PicUrl={0}".format(i.find("PicUrl").text))
+            l.append("Url={0}".format(i.find("Url").text))
             l.append("---")
-        c = u"\n".join(l)
-    elif type == u"image":
-        c = u"[image]\nMediaId={0}\n---".format(unicode(et.find("Image").find("MediaId").text))
+        c = "\n".join(l)
+    elif type == "image":
+        c = "[image]\nMediaId={0}\n---".format(et.find("Image").find("MediaId").text)
     else:
-        print "Unknown response."
+        print("Unknown response.")
         return
 
     t.insert(tk.END, settings["mp_display_name"]+"\n", "receive_name")
@@ -149,7 +149,7 @@ def mix(time):
 
     l = [timestamp, nonce, settings["token"]]
     l.sort()
-    signature = hashlib.sha1("".join(l)).hexdigest()
+    signature = hashlib.sha1("".join(l).encode()).hexdigest()
 
     return signature, timestamp, nonce
 
